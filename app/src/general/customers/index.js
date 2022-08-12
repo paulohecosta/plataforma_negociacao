@@ -18,7 +18,10 @@ const create = async (parsedBody) => {
         name: parsedBody.name,
         segment: parsedBody.segment
     };
-    return await dbService.createCustomer(filtered);
+    await dbService.createCustomer(filtered);
+    return {
+        "status": "OK"
+    }
 }
 
 const lambdaHandler = async (event) => {
@@ -32,7 +35,6 @@ const lambdaHandler = async (event) => {
         case 'POST':
             return eventHelper.createResponse(await create(JSON.parse(event.body)), 201);
         default:
-            callback(null, createError({'error': 'Method not defined!'}));
             break;
     }
 }

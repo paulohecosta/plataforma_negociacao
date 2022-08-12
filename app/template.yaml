@@ -58,6 +58,36 @@ Resources:
       #     SOCIAL_SOCIAL_NW_TABLE: !Sub '${InfraProjectName}-social-nw'
       #     SOCIAL_APP_TABLE: !Sub '${InfraProjectName}-app'
 
+  GiroProposalFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub '${AWS::StackName}-giro-proposal-function'
+      Runtime: nodejs14.x
+      CodeUri: ./src/general/giro-proposals
+      Handler: index.lambdaHandler
+      Role: !Ref LambdaRole
+      Layers:
+        - !Ref CoreLayer
+      Events:
+        GiroProposalFunctionAll:
+          Type: Api
+          Properties:
+            Path: /products/giro/proposals
+            Method: get
+            RestApiId: !Ref API
+        GiroProposalFunctionGet:
+          Type: Api
+          Properties:
+            Path: /products/giro/proposals/{proposal_id}
+            Method: get
+            RestApiId: !Ref API
+        GiroProposalFunctionPost:
+          Type: Api
+          Properties:
+            Path: /products/giro/proposals
+            Method: post
+            RestApiId: !Ref API
+
   CoreLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
@@ -73,4 +103,9 @@ Resources:
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName: !Join ['/', ['/aws/lambda', !Ref CustomersFunction]]
+      RetentionInDays: 3
+  GiroProposalFunctionLogs:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Join ['/', ['/aws/lambda', !Ref GiroProposalFunction]]
       RetentionInDays: 3

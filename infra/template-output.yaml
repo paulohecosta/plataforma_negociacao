@@ -71,6 +71,24 @@ Resources:
       ProvisionedThroughput:
         ReadCapacityUnits: '1'
         WriteCapacityUnits: '1'
+  Insurances:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName:
+        Fn::Sub: ${AWS::StackName}-insurances
+      AttributeDefinitions:
+      - AttributeName: insurance_id
+        AttributeType: S
+      - AttributeName: customer_id
+        AttributeType: S
+      KeySchema:
+      - AttributeName: insurance_id
+        KeyType: HASH
+      - AttributeName: customer_id
+        KeyType: RANGE
+      ProvisionedThroughput:
+        ReadCapacityUnits: '1'
+        WriteCapacityUnits: '1'
   Customers:
     Type: AWS::DynamoDB::Table
     Properties:
