@@ -1,0 +1,157 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Simple Infra Project
+
+Parameters:
+  Empty: 
+    Type: String
+
+Resources:
+  # ROLES
+  LambdaRole:
+    Type: AWS::IAM::Role
+    Properties: 
+      RoleName: !Sub '${AWS::StackName}-lambda-role'
+      AssumeRolePolicyDocument: 
+        Version: '2012-10-17'
+        Statement: 
+          Effect: 'Allow'
+          Principal: 
+            Service: 
+              - 'lambda.amazonaws.com'
+          Action: 
+            - 'sts:AssumeRole'
+      Path: '/'
+      Policies:
+          - PolicyName: AllowLambdaGlobal
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: 'Allow'
+                  Action:
+                    - 'dynamodb:*'
+                    - 'ses:*'
+                    - 'sns:*'
+                    - 'logs:CreateLogGroup'
+                    - 'logs:CreateLogStream'
+                    - 'logs:PutLogEvents'
+                    - 'logs:DescribeLogStreams'
+                  Resource: '*'
+
+  # TABLES
+  Negotations: 
+    Type: AWS::DynamoDB::Table
+    Properties: 
+      TableName: !Sub '${AWS::StackName}-negotiations'
+      AttributeDefinitions: 
+        - 
+          AttributeName: "negotiation_id"
+          AttributeType: "S"
+        - 
+          AttributeName: "customer_id"
+          AttributeType: "S"
+      KeySchema: 
+        - 
+          AttributeName: "negotiation_id"
+          KeyType: "HASH"
+        - 
+          AttributeName: "customer_id"
+          KeyType: "RANGE"
+      ProvisionedThroughput: 
+        ReadCapacityUnits: "1"
+        WriteCapacityUnits: "1"
+
+  Tasks: 
+    Type: AWS::DynamoDB::Table
+    Properties: 
+      TableName: !Sub '${AWS::StackName}-tasks'
+      AttributeDefinitions: 
+        - 
+          AttributeName: "task_id"
+          AttributeType: "S"
+        - 
+          AttributeName: "negotiation_id"
+          AttributeType: "S"
+      KeySchema: 
+        - 
+          AttributeName: "task_id"
+          KeyType: "HASH"
+        - 
+          AttributeName: "negotiation_id"
+          KeyType: "RANGE"
+      ProvisionedThroughput: 
+        ReadCapacityUnits: "1"
+        WriteCapacityUnits: "1"
+
+  Insurances: 
+    Type: AWS::DynamoDB::Table
+    Properties: 
+      TableName: !Sub '${AWS::StackName}-insurances'
+      AttributeDefinitions: 
+        - 
+          AttributeName: "insurance_id"
+          AttributeType: "S"
+        - 
+          AttributeName: "customer_id"
+          AttributeType: "S"
+      KeySchema: 
+        - 
+          AttributeName: "insurance_id"
+          KeyType: "HASH"
+        - 
+          AttributeName: "customer_id"
+          KeyType: "RANGE"
+      ProvisionedThroughput: 
+        ReadCapacityUnits: "1"
+        WriteCapacityUnits: "1"
+
+  Customers: 
+    Type: AWS::DynamoDB::Table
+    Properties: 
+      TableName: !Sub '${AWS::StackName}-customers'
+      AttributeDefinitions: 
+        - 
+          AttributeName: "customer_id"
+          AttributeType: "S"
+      KeySchema: 
+        - 
+          AttributeName: "customer_id"
+          KeyType: "HASH"
+      ProvisionedThroughput: 
+        ReadCapacityUnits: "1"
+        WriteCapacityUnits: "1"
+
+  # TOPICS
+  NegotiationTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: !Sub '${AWS::StackName}-negotiation-topic'
+
+  NegotiationTaskTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: !Sub '${AWS::StackName}-task-topic'
+
+  # PRODUCTS
+  GiroProposals: 
+    Type: AWS::DynamoDB::Table
+    Properties: 
+      TableName: !Sub '${AWS::StackName}-giro-proposals'
+      AttributeDefinitions: 
+        - 
+          AttributeName: "proposal_id"
+          AttributeType: "S"
+        - 
+          AttributeName: "customer_id"
+          AttributeType: "S"
+      KeySchema: 
+        - 
+          AttributeName: "proposal_id"
+          KeyType: "HASH"
+        - 
+          AttributeName: "customer_id"
+          KeyType: "RANGE"
+      ProvisionedThroughput: 
+        ReadCapacityUnits: "1"
+        WriteCapacityUnits: "1"

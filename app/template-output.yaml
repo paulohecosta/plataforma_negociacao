@@ -1,0 +1,47 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+Description: Simple API Project
+Parameters:
+  Empty:
+    Type: String
+  LambdaRole:
+    Type: String
+Resources:
+  API:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name:
+        Fn::Sub: ${AWS::StackName}-api
+      StageName: dev
+      EndpointConfiguration: REGIONAL
+      Cors:
+        AllowMethods: "'GET,OPTIONS,POST,PUT,PATCH,DELETE'"
+        AllowHeaders: "'X-Forwarded-For,Access-Control-Allow-Origin,Access-Control-Allow-Credentials,Access-Control-Allow-Methods,Access-Control-Allow-Headers,Origin,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Requested-With'"
+        AllowOrigin: "'*'"
+  CustomersFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName:
+        Fn::Sub: ${AWS::StackName}-customers-function
+      Runtime: nodejs14.x
+      CodeUri: s3://371716203543-artifacts/builds/96d9a7f2f17ce0fa085dc18df8f08716
+      Handler: index.lambdaHandler
+      Role:
+        Ref: LambdaRole
+      Events:
+        CustomersFunctionGetAll:
+          Type: Api
+          Properties:
+            Path: /customers
+            Method: get
+            RestApiId:
+              Ref: API
+  CustomersFunctionLogs:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName:
+        Fn::Join:
+        - /
+        - - /aws/lambda
+          - Ref: CustomersFunction
+      RetentionInDays: 3

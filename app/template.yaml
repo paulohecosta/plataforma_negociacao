@@ -1,0 +1,76 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+
+Description: Simple API Project
+
+Parameters:
+  Empty: 
+    Type: String
+  LambdaRole: 
+    Type: String
+
+Resources:
+  API: 
+    Type: AWS::Serverless::Api 
+    Properties: 
+      Name: !Sub '${AWS::StackName}-api'
+      StageName: dev
+      EndpointConfiguration: REGIONAL
+      Cors:
+        AllowMethods: "'GET,OPTIONS,POST,PUT,PATCH,DELETE'"
+        AllowHeaders: "'X-Forwarded-For,Access-Control-Allow-Origin,Access-Control-Allow-Credentials,Access-Control-Allow-Methods,Access-Control-Allow-Headers,Origin,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Requested-With'"
+        AllowOrigin: "'*'"
+
+  CustomersFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub '${AWS::StackName}-customers-function'
+      Runtime: nodejs14.x
+      CodeUri: ./src/general/customers
+      Handler: index.lambdaHandler
+      Role: !Ref LambdaRole
+      Layers:
+        - !Ref CoreLayer
+      Events:
+        CustomersFunctionGetAll:
+          Type: Api
+          Properties:
+            Path: /customers
+            Method: get
+            RestApiId: !Ref API
+        CustomersFunctionGet:
+          Type: Api
+          Properties:
+            Path: /customers/{customer_id}
+            Method: get
+            RestApiId: !Ref API
+        CustomersFunctionPost:
+          Type: Api
+          Properties:
+            Path: /customers
+            Method: post
+            RestApiId: !Ref API
+      # Environment:
+      #   Variables:
+      #     SOCIAL_CONFIG_TABLE: !Sub '${InfraProjectName}-config'
+      #     SOCIAL_ORG_TABLE: !Sub '${InfraProjectName}-org'
+      #     SOCIAL_USER_TABLE: !Sub '${InfraProjectName}-user'
+      #     SOCIAL_SOCIAL_NW_TABLE: !Sub '${InfraProjectName}-social-nw'
+      #     SOCIAL_APP_TABLE: !Sub '${InfraProjectName}-app'
+
+  CoreLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: !Sub '${AWS::StackName}-api'
+      Description: Dependencies for API
+      ContentUri: ./src/layer/
+      CompatibleRuntimes:
+        - nodejs12.x
+      LicenseInfo: 'MIT'
+
+  # LOGS
+  CustomersFunctionLogs:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Join ['/', ['/aws/lambda', !Ref CustomersFunction]]
+      RetentionInDays: 3

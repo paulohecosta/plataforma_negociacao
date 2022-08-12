@@ -1,0 +1,6 @@
+{
+    "Parameters": {
+        "Empty": "xxx",
+        "LambdaRole": "arn:aws:iam::371716203543:role/plat-infra-lambda-role"
+    }
+}
