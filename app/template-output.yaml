@@ -24,10 +24,12 @@ Resources:
       FunctionName:
         Fn::Sub: ${AWS::StackName}-customers-function
       Runtime: nodejs14.x
-      CodeUri: s3://371716203543-artifacts/builds/96d9a7f2f17ce0fa085dc18df8f08716
+      CodeUri: s3://371716203543-artifacts/builds/faee333c69a44df003efc1fe0ff100a1
       Handler: index.lambdaHandler
       Role:
         Ref: LambdaRole
+      Layers:
+      - Ref: CoreLayer
       Events:
         CustomersFunctionGetAll:
           Type: Api
@@ -36,6 +38,81 @@ Resources:
             Method: get
             RestApiId:
               Ref: API
+        CustomersFunctionGet:
+          Type: Api
+          Properties:
+            Path: /customers/{customer_id}
+            Method: get
+            RestApiId:
+              Ref: API
+        CustomersFunctionPost:
+          Type: Api
+          Properties:
+            Path: /customers
+            Method: post
+            RestApiId:
+              Ref: API
+  GiroProposalFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName:
+        Fn::Sub: ${AWS::StackName}-giro-proposal-function
+      Runtime: nodejs14.x
+      CodeUri: s3://371716203543-artifacts/builds/69d9547030557efae0a92817024b676e
+      Handler: index.lambdaHandler
+      Role:
+        Ref: LambdaRole
+      Layers:
+      - Ref: CoreLayer
+      Events:
+        GiroProposalFunctionAll:
+          Type: Api
+          Properties:
+            Path: /products/giro/proposals
+            Method: get
+            RestApiId:
+              Ref: API
+        GiroProposalFunctionGet:
+          Type: Api
+          Properties:
+            Path: /products/giro/proposals/{proposal_id}
+            Method: get
+            RestApiId:
+              Ref: API
+        GiroProposalFunctionPost:
+          Type: Api
+          Properties:
+            Path: /products/giro/proposals
+            Method: post
+            RestApiId:
+              Ref: API
+  NegotiationFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName:
+        Fn::Sub: ${AWS::StackName}-negotation-function
+      Runtime: nodejs14.x
+      CodeUri: s3://371716203543-artifacts/builds/4a377832bb32a011101c8b00b5e36faa
+      Handler: index.lambdaHandler
+      Role:
+        Ref: LambdaRole
+      Layers:
+      - Ref: CoreLayer
+      Events:
+        SNSEvent:
+          Type: SNS
+          Properties:
+            Topic: arn:aws:sns:us-east-2:371716203543:plat-infra-negotiation-topic
+  CoreLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName:
+        Fn::Sub: ${AWS::StackName}-api
+      Description: Dependencies for API
+      ContentUri: s3://371716203543-artifacts/builds/abfc434de57e00e1c3dce90367e7ed85
+      CompatibleRuntimes:
+      - nodejs12.x
+      LicenseInfo: MIT
   CustomersFunctionLogs:
     Type: AWS::Logs::LogGroup
     Properties:
@@ -44,4 +121,22 @@ Resources:
         - /
         - - /aws/lambda
           - Ref: CustomersFunction
+      RetentionInDays: 3
+  GiroProposalFunctionLogs:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName:
+        Fn::Join:
+        - /
+        - - /aws/lambda
+          - Ref: GiroProposalFunction
+      RetentionInDays: 3
+  NegotiationFunctionLogs:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName:
+        Fn::Join:
+        - /
+        - - /aws/lambda
+          - Ref: NegotiationFunction
       RetentionInDays: 3
