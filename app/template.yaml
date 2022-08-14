@@ -103,10 +103,16 @@ Resources:
           Type: SNS
           Properties:
             Topic: arn:aws:sns:us-east-2:371716203543:plat-infra-negotiation-topic
-        NegotiationFunctionAll:
+        NegotiationFunctionGetAll:
           Type: Api
           Properties:
             Path: /negotiations
+            Method: get
+            RestApiId: !Ref API
+        NegotiationFunctionGet:
+          Type: Api
+          Properties:
+            Path: /negotiations/{negotiation_id}
             Method: get
             RestApiId: !Ref API
 

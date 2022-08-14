@@ -18,9 +18,9 @@ const lambdaHandler = async (event) => {
         console.log(event.Records[0].Sns);
 
         const neg = JSON.parse(event.Records[0].Sns.Message);
-        neg['negotiation_id'] = `${neg.product_id}${neg.proposal_id}`;
+        neg['negotiation_id'] = `${neg.product_id}-${neg.proposal_id}`;
         await dbService.createNegotiation(neg);
-        
+
         return 'OK';
     } else {
         switch (event.httpMethod) {
