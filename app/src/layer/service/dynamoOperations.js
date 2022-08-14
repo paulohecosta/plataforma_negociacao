@@ -3,7 +3,8 @@ const AWS = require('aws-sdk');
 
 const constantVars = {
     CUSTOMERS_TABLE: 'plat-infra-customers',
-    GIRO_PROPOSALS_TABLE: 'plat-infra-giro-proposals'
+    GIRO_PROPOSALS_TABLE: 'plat-infra-giro-proposals',
+    NEGOTIATIONS_TABLE: 'plat-infra-negotiations'
 }
 
 
@@ -288,6 +289,46 @@ const deleteGiroProposal = (key) => {
     return deleteItem(constantVars.GIRO_PROPOSALS_TABLE, key);
 }
 
+const createNegotiation = (obj) => {
+    return createItem(constantVars.NEGOTIATIONS_TABLE, obj);
+}
+
+const getNegotiation = (key) => {
+    return new Promise((resolve, reject) => {
+        getItem(constantVars.NEGOTIATIONS_TABLE, key)
+            .then(data => {
+                if (data.Item) {
+                    resolve({
+                        negotiation: data.Item
+                    });
+                } else {
+                    reject('RECORD_NOT_FOUND');
+                }
+            })
+            .catch(err => {
+                reject(err);
+            });
+    });
+}
+
+const getAllNegotiation = () => {
+    return new Promise((resolve, reject) => {
+        getAllItems(constantVars.NEGOTIATIONS_TABLE)
+            .then(data => {
+                if (data.Items) {
+                    resolve({
+                        negotiations: data.Items
+                    });
+                } else {
+                    reject('RECORD_NOT_FOUND');
+                }
+            })
+            .catch(err => {
+                reject(err);
+            });
+    });
+}
+
 module.exports = {
     createItem,
     updateItem,
@@ -300,5 +341,8 @@ module.exports = {
     getCustomer,
     getAllCustomer,
     deleteCustomer,
-    createGiroProposal
+    createGiroProposal,
+    createNegotiation,
+    getNegotiation,
+    getAllNegotiation
 }
