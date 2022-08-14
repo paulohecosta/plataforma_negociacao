@@ -24,7 +24,7 @@ Resources:
       FunctionName:
         Fn::Sub: ${AWS::StackName}-customers-function
       Runtime: nodejs14.x
-      CodeUri: s3://371716203543-artifacts/builds/faee333c69a44df003efc1fe0ff100a1
+      CodeUri: s3://371716203543-artifacts/builds/bdd6f3304801a84ae9402a8b7597dd4c
       Handler: index.lambdaHandler
       Role:
         Ref: LambdaRole
@@ -92,7 +92,7 @@ Resources:
       FunctionName:
         Fn::Sub: ${AWS::StackName}-negotation-function
       Runtime: nodejs14.x
-      CodeUri: s3://371716203543-artifacts/builds/e84fdce4699ef6e1c2e085a1a91ee529
+      CodeUri: s3://371716203543-artifacts/builds/2ddad59f0531e88db5fa65bfb97de3e5
       Handler: index.lambdaHandler
       Role:
         Ref: LambdaRole
@@ -103,13 +103,20 @@ Resources:
           Type: SNS
           Properties:
             Topic: arn:aws:sns:us-east-2:371716203543:plat-infra-negotiation-topic
+        NegotiationFunctionAll:
+          Type: Api
+          Properties:
+            Path: /negotiations
+            Method: get
+            RestApiId:
+              Ref: API
   CoreLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
       LayerName:
         Fn::Sub: ${AWS::StackName}-api
       Description: Dependencies for API
-      ContentUri: s3://371716203543-artifacts/builds/abfc434de57e00e1c3dce90367e7ed85
+      ContentUri: s3://371716203543-artifacts/builds/62e20fef1778cdabf92471769d192ed5
       CompatibleRuntimes:
       - nodejs12.x
       LicenseInfo: MIT

@@ -65,3 +65,6 @@ builds/
 .DS_Store
 .iml
 .vscode
+
+
+template-output.yaml
