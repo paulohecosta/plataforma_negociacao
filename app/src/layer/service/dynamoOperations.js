@@ -311,6 +311,29 @@ const getNegotiation = (key) => {
     });
 }
 
+const getAllCustomerNegotiation = (customer_id) => {
+    return new Promise((resolve, reject) => {
+        getAllRangeItems(constantVars.NEGOTIATIONS_TABLE, 'customer_id', customer_id)
+            .then(data => {
+                if (data.Item) {
+                    resolve({
+                        negotiations: [data.Item]
+                    });
+                }
+                if (data.Items) {
+                    resolve({
+                        negotiations: data.Items
+                    });
+                } else {
+                    reject('RECORD_NOT_FOUND');
+                }
+            })
+            .catch(err => {
+                reject(err);
+            });
+    });
+}
+
 const getAllNegotiation = () => {
     return new Promise((resolve, reject) => {
         getAllItems(constantVars.NEGOTIATIONS_TABLE)
@@ -344,5 +367,6 @@ module.exports = {
     createGiroProposal,
     createNegotiation,
     getNegotiation,
-    getAllNegotiation
+    getAllNegotiation,
+    getAllCustomerNegotiation
 }

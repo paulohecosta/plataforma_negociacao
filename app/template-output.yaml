@@ -58,7 +58,7 @@ Resources:
       FunctionName:
         Fn::Sub: ${AWS::StackName}-giro-proposal-function
       Runtime: nodejs14.x
-      CodeUri: s3://371716203543-artifacts/builds/c20ebd3c4a63627058f5900fe570d2f1
+      CodeUri: s3://371716203543-artifacts/builds/1bb669c9b18524b7adcaa4ecbe30267b
       Handler: index.lambdaHandler
       Role:
         Ref: LambdaRole
@@ -92,7 +92,7 @@ Resources:
       FunctionName:
         Fn::Sub: ${AWS::StackName}-negotation-function
       Runtime: nodejs14.x
-      CodeUri: s3://371716203543-artifacts/builds/2ddad59f0531e88db5fa65bfb97de3e5
+      CodeUri: s3://371716203543-artifacts/builds/4406b5b47b1b161bf6f88adbed2a253f
       Handler: index.lambdaHandler
       Role:
         Ref: LambdaRole
@@ -103,10 +103,17 @@ Resources:
           Type: SNS
           Properties:
             Topic: arn:aws:sns:us-east-2:371716203543:plat-infra-negotiation-topic
-        NegotiationFunctionAll:
+        NegotiationFunctionGetAll:
           Type: Api
           Properties:
             Path: /negotiations
+            Method: get
+            RestApiId:
+              Ref: API
+        NegotiationFunctionGet:
+          Type: Api
+          Properties:
+            Path: /negotiations/{negotiation_id}
             Method: get
             RestApiId:
               Ref: API

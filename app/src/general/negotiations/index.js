@@ -5,6 +5,10 @@ const readAll = async () => {
     return await dbService.getAllNegotiation();
 }
 
+const readAllCustomer = async (customer_id) => {
+    return await dbService.getAllCustomerNegotiation(customer_id);
+}
+
 const readOne = async (negotiation_id) => {
     let key = {
         negotiation_id
@@ -27,6 +31,8 @@ const lambdaHandler = async (event) => {
             case 'GET':
                 if(event.pathParameters && event.pathParameters.negotiation_id) {
                     return eventHelper.createResponse(await readOne(event.pathParameters.negotiation_id), 200);
+                } else if(event.queryStringParameters && event.queryStringParameters.customer_id) {
+                    return eventHelper.createResponse(await readAllCustomer(event.queryStringParameters.customer_id), 200);
                 } else {
                     return eventHelper.createResponse(await readAll(), 200);
                 }
