@@ -19,6 +19,7 @@ const lambdaHandler = async (event) => {
 
         const task = JSON.parse(event.Records[0].Sns.Message);
         task['task_id'] = (new Date()).getTime();
+        task['negotiation_id'] = `${task.product_id}-${task.proposal_id}`;
         await dbService.createTask(task);
 
         return 'OK';

@@ -123,7 +123,7 @@ Resources:
       FunctionName:
         Fn::Sub: ${AWS::StackName}-task-function
       Runtime: nodejs14.x
-      CodeUri: s3://371716203543-artifacts/builds/046d577f75d2a8714e3b546363ae367d
+      CodeUri: s3://371716203543-artifacts/builds/6a13ffe0c3564e9185705a7620d6b119
       Handler: index.lambdaHandler
       Role:
         Ref: LambdaRole
@@ -184,4 +184,13 @@ Resources:
         - /
         - - /aws/lambda
           - Ref: NegotiationFunction
+      RetentionInDays: 3
+  TaskFunctionLogs:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName:
+        Fn::Join:
+        - /
+        - - /aws/lambda
+          - Ref: TaskFunction
       RetentionInDays: 3
