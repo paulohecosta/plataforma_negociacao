@@ -58,7 +58,7 @@ Resources:
       FunctionName:
         Fn::Sub: ${AWS::StackName}-giro-proposal-function
       Runtime: nodejs14.x
-      CodeUri: s3://371716203543-artifacts/builds/1bb669c9b18524b7adcaa4ecbe30267b
+      CodeUri: s3://371716203543-artifacts/builds/f142dbfad027f10900f0dc2570102b57
       Handler: index.lambdaHandler
       Role:
         Ref: LambdaRole
@@ -117,13 +117,44 @@ Resources:
             Method: get
             RestApiId:
               Ref: API
+  TaskFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName:
+        Fn::Sub: ${AWS::StackName}-task-function
+      Runtime: nodejs14.x
+      CodeUri: s3://371716203543-artifacts/builds/046d577f75d2a8714e3b546363ae367d
+      Handler: index.lambdaHandler
+      Role:
+        Ref: LambdaRole
+      Layers:
+      - Ref: CoreLayer
+      Events:
+        SNSEvent:
+          Type: SNS
+          Properties:
+            Topic: arn:aws:sns:us-east-2:371716203543:plat-infra-task-topic
+        TaskFunctionGetAll:
+          Type: Api
+          Properties:
+            Path: /tasks
+            Method: get
+            RestApiId:
+              Ref: API
+        TaskFunctionGet:
+          Type: Api
+          Properties:
+            Path: /tasks/{task_id}
+            Method: get
+            RestApiId:
+              Ref: API
   CoreLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
       LayerName:
         Fn::Sub: ${AWS::StackName}-api
       Description: Dependencies for API
-      ContentUri: s3://371716203543-artifacts/builds/079ec25845db1a133154669d48b9ff8c
+      ContentUri: s3://371716203543-artifacts/builds/8737d7b71552f303bd15ee38e08fa0c8
       CompatibleRuntimes:
       - nodejs12.x
       LicenseInfo: MIT

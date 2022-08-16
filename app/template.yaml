@@ -170,3 +170,8 @@ Resources:
     Properties:
       LogGroupName: !Join ['/', ['/aws/lambda', !Ref NegotiationFunction]]
       RetentionInDays: 3
+  TaskFunctionLogs:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Join ['/', ['/aws/lambda', !Ref TaskFunction]]
+      RetentionInDays: 3
