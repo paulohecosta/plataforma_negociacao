@@ -116,6 +116,34 @@ Resources:
             Method: get
             RestApiId: !Ref API
 
+  TaskFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub '${AWS::StackName}-task-function'
+      Runtime: nodejs14.x
+      CodeUri: ./src/general/tasks
+      Handler: index.lambdaHandler
+      Role: !Ref LambdaRole
+      Layers:
+        - !Ref CoreLayer
+      Events:
+        SNSEvent:
+          Type: SNS
+          Properties:
+            Topic: arn:aws:sns:us-east-2:371716203543:plat-infra-task-topic
+        TaskFunctionGetAll:
+          Type: Api
+          Properties:
+            Path: /tasks
+            Method: get
+            RestApiId: !Ref API
+        TaskFunctionGet:
+          Type: Api
+          Properties:
+            Path: /tasks/{task_id}
+            Method: get
+            RestApiId: !Ref API
+
   CoreLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:

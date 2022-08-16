@@ -92,7 +92,7 @@ Resources:
       FunctionName:
         Fn::Sub: ${AWS::StackName}-negotation-function
       Runtime: nodejs14.x
-      CodeUri: s3://371716203543-artifacts/builds/4406b5b47b1b161bf6f88adbed2a253f
+      CodeUri: s3://371716203543-artifacts/builds/5d44a60de868446c02972e3289f994c8
       Handler: index.lambdaHandler
       Role:
         Ref: LambdaRole
@@ -123,7 +123,7 @@ Resources:
       LayerName:
         Fn::Sub: ${AWS::StackName}-api
       Description: Dependencies for API
-      ContentUri: s3://371716203543-artifacts/builds/62e20fef1778cdabf92471769d192ed5
+      ContentUri: s3://371716203543-artifacts/builds/079ec25845db1a133154669d48b9ff8c
       CompatibleRuntimes:
       - nodejs12.x
       LicenseInfo: MIT

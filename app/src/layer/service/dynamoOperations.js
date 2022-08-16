@@ -4,7 +4,8 @@ const AWS = require('aws-sdk');
 const constantVars = {
     CUSTOMERS_TABLE: 'plat-infra-customers',
     GIRO_PROPOSALS_TABLE: 'plat-infra-giro-proposals',
-    NEGOTIATIONS_TABLE: 'plat-infra-negotiations'
+    NEGOTIATIONS_TABLE: 'plat-infra-negotiations',
+    TASKS_TABLE: 'plat-infra-tasks'
 }
 
 
@@ -352,6 +353,46 @@ const getAllNegotiation = () => {
     });
 }
 
+const createTask = (obj) => {
+    return createItem(constantVars.TASKS_TABLE, obj);
+}
+
+const getTask = (key) => {
+    return new Promise((resolve, reject) => {
+        getItem(constantVars.TASKS_TABLE, key)
+            .then(data => {
+                if (data.Item) {
+                    resolve({
+                        task: data.Item
+                    });
+                } else {
+                    reject('RECORD_NOT_FOUND');
+                }
+            })
+            .catch(err => {
+                reject(err);
+            });
+    });
+}
+
+const getAllTask = () => {
+    return new Promise((resolve, reject) => {
+        getAllItems(constantVars.TASKS_TABLE)
+            .then(data => {
+                if (data.Items) {
+                    resolve({
+                        tasks: data.Items
+                    });
+                } else {
+                    reject('RECORD_NOT_FOUND');
+                }
+            })
+            .catch(err => {
+                reject(err);
+            });
+    });
+}
+
 module.exports = {
     createItem,
     updateItem,
@@ -368,5 +409,8 @@ module.exports = {
     createNegotiation,
     getNegotiation,
     getAllNegotiation,
-    getAllCustomerNegotiation
+    getAllCustomerNegotiation,
+    createTask,
+    getTask,
+    getAllTask
 }
