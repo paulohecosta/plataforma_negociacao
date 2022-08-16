@@ -2,6 +2,19 @@ const eventHelper = require('/opt/helper/eventHelper.js');
 const dbService = require('/opt/service/dynamoOperations.js');
 const snsService = require('/opt/service/snsOperations.js');
 
+const readOne = async (proposal_id) => {
+    try {
+        return await dbService.getGiroProposal(proposal_id);
+    } catch (error) {
+        console.log(JSON.stringify(error));
+        console.log(error.errorMessage);
+    }
+}
+
+const readAll = async () => {
+    return await dbService.getAllGiroProposal();
+}
+
 const create = async (parsedBody) => {
     filtered = {
         customer_id: parsedBody.customer_id,
@@ -36,7 +49,14 @@ const create = async (parsedBody) => {
 }
 
 const lambdaHandler = async (event) => {
-    switch (event.httpMethod) {         
+    switch (event.httpMethod) {       
+        case 'GET':
+            if(event.pathParameters && event.pathParameters.proposal_id) {
+                return eventHelper.createResponse(await readOne(event.pathParameters.proposal_id), 200);
+            } else {
+                return eventHelper.createResponse(await readAll(), 200);
+            }
+            break;  
         case 'POST':
             const result = await create(JSON.parse(event.body));
             console.log(JSON.stringify(result));

@@ -110,6 +110,33 @@ const getItem = (tableName, key) => {
     });
 }
 
+const getItemScan = (tableName, rangeKey, rangeValue) => {
+    return new Promise((resolve, reject) => {
+        let envVars = process.env;
+        AWS.config.update({
+            region: envVars.AWS_REGION
+        });
+        let docClient = new AWS.DynamoDB.DocumentClient();
+        let params = {
+            TableName: tableName,
+            KeyConditionExpression: '#rangeKey = :rangeValue',
+            ExpressionAttributeNames: {
+                '#rangeKey': rangeKey,
+            },
+            ExpressionAttributeValues: {
+                ':rangeValue': rangeValue
+            }
+        };
+        docClient.query(params, function (err, data) {
+            if (err) {
+                reject({ 'message': 'Unable to get item. Error JSON: ' + JSON.stringify(err, null, 2) });
+            } else {
+                resolve(data);
+            }
+        });
+    });
+}
+
 const getAllItems = (tableName) => {
 
     return new Promise((resolve, reject) => {
@@ -252,11 +279,11 @@ const updateGiroProposal = (obj, attrsObj) => {
 
 const getGiroProposal = (key) => {
     return new Promise((resolve, reject) => {
-        getItem(constantVars.GIRO_PROPOSALS_TABLE, key)
+        getItemScan(constantVars.GIRO_PROPOSALS_TABLE, 'proposal_id', key)
             .then(data => {
-                if (data.Item) {
+                if (data.Items) {
                     resolve({
-                        proposal: data.Item
+                        proposal: data.Items[0]
                     });
                 } else {
                     reject('RECORD_NOT_FOUND');
@@ -412,5 +439,7 @@ module.exports = {
     getAllCustomerNegotiation,
     createTask,
     getTask,
-    getAllTask
+    getAllTask,
+    getGiroProposal,
+    getAllGiroProposal
 }
