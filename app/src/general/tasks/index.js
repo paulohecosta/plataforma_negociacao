@@ -14,7 +14,7 @@ const readOne = async (task_id) => {
 
 const lambdaHandler = async (event) => {
     if(event.Records && event.Records[0] && event.Records[0].Sns) {
-        
+
         const task = JSON.parse(event.Records[0].Sns.Message);
         task['task_id'] = (new Date()).getTime();
         await dbService.createTask(task);
@@ -28,7 +28,6 @@ const lambdaHandler = async (event) => {
                 } else {
                     return eventHelper.createResponse(await readAll(), 200);
                 }
-                break;
             default:
                 break;
         }

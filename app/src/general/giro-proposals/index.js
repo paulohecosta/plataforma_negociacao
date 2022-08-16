@@ -13,10 +13,23 @@ const create = async (parsedBody) => {
         parcels: parsedBody.parcels,
         total_tax: parsedBody.total_tax,
         total_amount: parsedBody.total_amount,
+        proposal_status: 'NOVO',
         created_date: (new Date()).getTime()
     };
     await dbService.createGiroProposal(filtered);
     await snsService.pubNegotiation('NEW_NEGOTIATION', filtered);
+    if(!parsedBody.credit) {
+        await snsService.pubTask('NEW_TASK', {
+            customer_id: parsedBody.customer_id,
+            product_id: '1',
+            product_name: 'GIRO',
+            proposal_id: parsedBody.proposal_id,
+            task_status: 'ABERTA',
+            task_type: 'CREDITO',
+            task_message: 'Falta de avaliação de crédito',
+            created_date: (new Date()).getTime()
+        });
+    }
     return {
         "status": "OK"
     }
