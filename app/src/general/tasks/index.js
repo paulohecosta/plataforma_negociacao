@@ -14,14 +14,15 @@ const readOne = async (task_id) => {
 
 const lambdaHandler = async (event) => {
     if(event.Records && event.Records[0] && event.Records[0].Sns) {
-
-        console.log(event.Records[0].Sns);
-
         const task = JSON.parse(event.Records[0].Sns.Message);
-        task['task_id'] = (new Date()).getTime();
+        task['task_id'] = `${(new Date()).getTime()}`;
         task['negotiation_id'] = `${task.product_id}-${task.proposal_id}`;
-        await dbService.createTask(task);
-
+        try {
+            await dbService.createTask(task);
+        } catch (error) {
+            console.log(error);
+            console.log(error.errorMessage);
+        }
         return 'OK';
     } else {
         switch (event.httpMethod) {
