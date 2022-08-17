@@ -58,7 +58,7 @@ Resources:
       FunctionName:
         Fn::Sub: ${AWS::StackName}-giro-proposal-function
       Runtime: nodejs14.x
-      CodeUri: s3://371716203543-artifacts/builds/f142dbfad027f10900f0dc2570102b57
+      CodeUri: s3://371716203543-artifacts/builds/8b836cd3449f659a9b2ab7af9fdde5b3
       Handler: index.lambdaHandler
       Role:
         Ref: LambdaRole
@@ -154,7 +154,7 @@ Resources:
       LayerName:
         Fn::Sub: ${AWS::StackName}-api
       Description: Dependencies for API
-      ContentUri: s3://371716203543-artifacts/builds/8737d7b71552f303bd15ee38e08fa0c8
+      ContentUri: s3://371716203543-artifacts/builds/4ad314905ead92661fa08ef127e5f25e
       CompatibleRuntimes:
       - nodejs12.x
       LicenseInfo: MIT

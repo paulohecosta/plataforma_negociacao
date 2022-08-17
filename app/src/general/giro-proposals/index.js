@@ -39,6 +39,7 @@ const create = async (parsedBody) => {
             proposal_id: parsedBody.proposal_id,
             task_status: 'ABERTA',
             task_type: 'CREDITO',
+            priority: 'MEDIUM',
             task_message: 'Falta de avaliação de crédito',
             created_date: (new Date()).getTime()
         });
