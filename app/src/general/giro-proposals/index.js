@@ -1,6 +1,7 @@
 const eventHelper = require('/opt/helper/eventHelper.js');
 const dbService = require('/opt/service/dynamoOperations.js');
 const snsService = require('/opt/service/snsOperations.js');
+const dumpService = require('/opt/service/mockServices.js');
 
 const readOne = async (proposal_id) => {
     try {
@@ -13,6 +14,22 @@ const readOne = async (proposal_id) => {
 
 const readAll = async () => {
     return await dbService.getAllGiroProposal();
+}
+
+const agregatorDays = async (filtered) => {
+    if(filtered.start_date && filtered.end_date) {
+        console.log('ENTROU NO DAYS');
+        some_days = await dumpService.searchDays();
+        filtered['working_days'] = some_days.working_days;
+        filtered['holidays'] = some_days.holidays;
+    }
+}
+
+const agregatorDumpLazyValidation = async (filtered) => {
+    if(filtered.trash) {
+        console.log('ENTROU NO TRASH');
+        await dumpService.trashTimeout();
+    }
 }
 
 const create = async (parsedBody) => {
@@ -29,8 +46,19 @@ const create = async (parsedBody) => {
         credit: parsedBody.credit,
         guarantee: parsedBody.guarantee,
         proposal_status: 'NOVO',
+        start_date: parsedBody.start_date,
+        end_date: parsedBody.end_date,
+        trash: parsedBody.trash,
         created_date: (new Date()).getTime()
     };
+    // validators
+    // USE JSON SCHEMA HERE
+    // agregatores DE MANEIRA SIMPLES MAS PARALELA
+    await Promise.all([
+        agregatorDays(filtered),
+        agregatorDumpLazyValidation(filtered)
+    ]);
+    //
     await dbService.createGiroProposal(filtered);
     await snsService.pubNegotiation('NEW_NEGOTIATION', filtered);
     if(!parsedBody.credit || parsedBody.credit != 'SIM') {
@@ -59,7 +87,6 @@ const lambdaHandler = async (event) => {
             } else {
                 return eventHelper.createResponse(await readAll(), 200);
             }
-            break;  
         case 'POST':
             const result = await create(JSON.parse(event.body));
             console.log(JSON.stringify(result));
