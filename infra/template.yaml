@@ -155,3 +155,25 @@ Resources:
       ProvisionedThroughput: 
         ReadCapacityUnits: "1"
         WriteCapacityUnits: "1"
+
+  CessaoProposals: 
+    Type: AWS::DynamoDB::Table
+    Properties: 
+      TableName: !Sub '${AWS::StackName}-cessao-proposals'
+      AttributeDefinitions: 
+        - 
+          AttributeName: "proposal_id"
+          AttributeType: "S"
+        - 
+          AttributeName: "customer_id"
+          AttributeType: "S"
+      KeySchema: 
+        - 
+          AttributeName: "proposal_id"
+          KeyType: "HASH"
+        - 
+          AttributeName: "customer_id"
+          KeyType: "RANGE"
+      ProvisionedThroughput: 
+        ReadCapacityUnits: "1"
+        WriteCapacityUnits: "1"
