@@ -18,9 +18,8 @@ const readOne = async (negotiation_id) => {
 
 const lambdaHandler = async (event) => {
     if(event.Records && event.Records[0] && event.Records[0].Sns) {
-
+        
         console.log(event.Records[0].Sns);
-
         const neg = JSON.parse(event.Records[0].Sns.Message);
         neg['negotiation_id'] = `${neg.product_id}-${neg.proposal_id}`;
         await dbService.createNegotiation(neg);
@@ -36,9 +35,8 @@ const lambdaHandler = async (event) => {
                 } else {
                     return eventHelper.createResponse(await readAll(), 200);
                 }
-                break;
             default:
-                break;
+                return 'OK';
         }
     }
 }

@@ -88,6 +88,36 @@ Resources:
             Method: post
             RestApiId: !Ref API
 
+  CessaoProposalFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub '${AWS::StackName}-cessao-proposal-function'
+      Runtime: nodejs14.x
+      CodeUri: ./src/general/cessao-proposals
+      Handler: index.lambdaHandler
+      Role: !Ref LambdaRole
+      Layers:
+        - !Ref CoreLayer
+      Events:
+        GiroProposalFunctionAll:
+          Type: Api
+          Properties:
+            Path: /products/cessao/proposals
+            Method: get
+            RestApiId: !Ref API
+        GiroProposalFunctionGet:
+          Type: Api
+          Properties:
+            Path: /products/cessao/proposals/{proposal_id}
+            Method: get
+            RestApiId: !Ref API
+        GiroProposalFunctionPost:
+          Type: Api
+          Properties:
+            Path: /products/cessao/proposals
+            Method: post
+            RestApiId: !Ref API
+
   NegotiationFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -164,6 +194,11 @@ Resources:
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName: !Join ['/', ['/aws/lambda', !Ref GiroProposalFunction]]
+      RetentionInDays: 3
+  CessaoProposalFunctionLogs:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Join ['/', ['/aws/lambda', !Ref CessaoProposalFunction]]
       RetentionInDays: 3
   NegotiationFunctionLogs:
     Type: AWS::Logs::LogGroup

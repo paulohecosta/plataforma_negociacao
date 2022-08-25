@@ -4,6 +4,7 @@ const AWS = require('aws-sdk');
 const constantVars = {
     CUSTOMERS_TABLE: 'plat-infra-customers',
     GIRO_PROPOSALS_TABLE: 'plat-infra-giro-proposals',
+    CESSAO_PROPOSALS_TABLE: 'plat-infra-cessao-proposals',
     NEGOTIATIONS_TABLE: 'plat-infra-negotiations',
     TASKS_TABLE: 'plat-infra-tasks'
 }
@@ -269,6 +270,10 @@ const deleteCustomer = (key) => {
     return deleteItem(constantVars.CUSTOMERS_TABLE, key);
 }
 
+const createCessaoProposal = (obj) => {
+    return createItem(constantVars.CESSAO_PROPOSALS_TABLE, obj);
+}
+
 const createGiroProposal = (obj) => {
     return createItem(constantVars.GIRO_PROPOSALS_TABLE, obj);
 }
@@ -441,5 +446,6 @@ module.exports = {
     getTask,
     getAllTask,
     getGiroProposal,
-    getAllGiroProposal
+    getAllGiroProposal,
+    createCessaoProposal
 }
